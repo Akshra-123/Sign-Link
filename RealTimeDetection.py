@@ -143,12 +143,21 @@ DATA_PATH = os.path.join('MP_Data')
 
 # Actions that we try to detect
 actions = np.array(['hello', 'thanks', 'Bye'])
+no_sequences=5
+for action in actions: 
+    for sequence in range(no_sequences):
+        try: 
+            os.makedirs(os.path.join(DATA_PATH, action, str(sequence)))
+        except:
+            pass
 
 # Thirty videos worth of data
 no_sequences = 15
 
 # Videos are going to be 30 frames in length
 sequence_length = 15
+
+start_folder = 15
 
 for action in actions: 
     for sequence in range(no_sequences):
@@ -260,11 +269,11 @@ print(model.summary())
 
 # Make Predictions
 res = model.predict(X_test)
-actions[np.argmax(res[4])]
+actions[np.argmax(res[2])]
 
+np.save('X_test.npy', X_test)
+np.save('y_test.npy', y_test)
 
 # Save Weights
 model.save('action.h5')
-del model
 model.load_weights('action.h5')
-
