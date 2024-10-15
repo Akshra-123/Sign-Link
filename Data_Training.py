@@ -67,3 +67,66 @@ def extract_frames_from_videos(video_folder, output_folder, fps=5):
 video_folder = "C:\\SignLanguage\\Dataset"
 output_folder = "C:\\SignLanguage\\OutputFolder"
 extract_frames_from_videos(video_folder, output_folder, fps=5)
+
+import os
+import cv2
+import numpy as np
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+def preprocess_images(image_folder, output_folder, target_size=(224, 224), augment=False):
+    # Create output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Set up data augmentation if required
+    if augment:
+        datagen = ImageDataGenerator(
+            rotation_range=20,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            fill_mode='nearest'
+        )
+    
+    # Loop through each class folder in the image folder
+    for class_name in os.listdir(image_folder):
+        class_folder = os.path.join(image_folder, class_name)
+        if os.path.isdir(class_folder):
+            os.makedirs(os.path.join(output_folder, class_name), exist_ok=True)
+
+            # Process each image in the class folder
+            for image_name in os.listdir(class_folder):
+                image_path = os.path.join(class_folder, image_name)
+
+                # Load the image
+                image = cv2.imread(image_path)
+                if image is None:
+                    continue
+                
+                # Resize the image
+                image = cv2.resize(image, target_size)
+                
+                # Normalize the image
+                image = image / 255.0  # Scale pixel values to [0, 1]
+
+                # Save the original processed image
+                output_image_path = os.path.join(output_folder, class_name, image_name)
+                cv2.imwrite(output_image_path, (image * 255).astype(np.uint8))  # Convert back to [0, 255] for saving
+
+                # If augmentation is enabled, apply transformations
+                if augment:
+                    # Reshape image for data generator
+                    image = np.expand_dims(image, axis=0)
+
+                    # Generate augmented images
+                    for i, augmented_image in enumerate(datagen.flow(image, batch_size=1)):
+                        aug_image_path = os.path.join(output_folder, class_name, f"{image_name.split('.')[0]}_aug_{i}.jpg")
+                        cv2.imwrite(aug_image_path, (augmented_image[0] * 255).astype(np.uint8))
+                        if i >= 5:  # Save only 5 augmented images
+                            break
+
+# Example usage
+image_folder = "C:\\SignLanguage\\OutputFolder"  # Folder with extracted frames
+output_folder = "C:\\SignLanguage\\ProcessedDataset"  # Folder for processed images
+preprocess_images(image_folder, output_folder, target_size=(224, 224), augment=True)
