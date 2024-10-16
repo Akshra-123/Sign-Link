@@ -195,6 +195,7 @@ image_folder = "C:\\SignLanguage\\ProcessedDataset"
 output_folder = "C:\\SignLanguage\\FinalDataset"
 split_dataset(image_folder, output_folder)
 
+
 # resnet50 Architecture 
 # Import necessary libraries
 from tensorflow.keras.models import Sequential
@@ -231,3 +232,39 @@ model_resnet50 = create_resnet50_model(input_shape, num_classes)
 model_resnet50.compile(optimizer=Adam(learning_rate=0.0001),
                        loss='categorical_crossentropy',
                        metrics=['accuracy'])
+
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Create data generators for training, validation, and test sets
+train_datagen = ImageDataGenerator(rescale=1./255)  # Normalize images
+val_datagen = ImageDataGenerator(rescale=1./255)
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+# Set paths to the dataset folders
+train_dir = "C:\\SignLanguage\\FinalDataset\\train"
+val_dir = "C:\\SignLanguage\\FinalDataset\\val"
+test_dir = "C:\\SignLanguage\\FinalDataset\\test"
+
+# Load the datasets from the directories
+train_generator = train_datagen.flow_from_directory(
+    train_dir,
+    target_size=(224, 224),
+    batch_size=32,  # Adjust based on memory limitations
+    class_mode='categorical'
+)
+
+val_generator = val_datagen.flow_from_directory(
+    val_dir,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical'
+)
+
+test_generator = test_datagen.flow_from_directory(
+    test_dir,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical'
+)
+
