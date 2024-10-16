@@ -195,3 +195,39 @@ image_folder = "C:\\SignLanguage\\ProcessedDataset"
 output_folder = "C:\\SignLanguage\\FinalDataset"
 split_dataset(image_folder, output_folder)
 
+# resnet50 Architecture 
+# Import necessary libraries
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.layers import Dense, Flatten, Dropout
+from tensorflow.keras.optimizers import Adam
+
+# Define the ResNet50 model using transfer learning
+def create_resnet50_model(input_shape, num_classes):
+    base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+
+    # Freeze the base model (pre-trained weights)
+    base_model.trainable = False
+
+    # Create a new model on top of it
+    model = Sequential([
+        base_model,
+        Flatten(),
+        Dense(1024, activation='relu'),
+        Dropout(0.5),
+        Dense(num_classes, activation='softmax')
+    ])
+
+    return model
+
+# Example usage:
+input_shape = (224, 224, 3)  # Assuming your images are 224x224 RGB
+num_classes = 10  # Set the number of classes based on your dataset
+
+# Create the model
+model_resnet50 = create_resnet50_model(input_shape, num_classes)
+
+# Compile the model
+model_resnet50.compile(optimizer=Adam(learning_rate=0.0001),
+                       loss='categorical_crossentropy',
+                       metrics=['accuracy'])
