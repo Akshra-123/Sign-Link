@@ -157,3 +157,46 @@ def check_labels(image_folder):
 # Example usage
 image_folder = "C:\\SignLanguage\\ProcessedDataset"  # Your folder with processed images
 check_labels(image_folder)
+
+# Data Splitting
+import os
+import shutil
+import random
+
+def split_dataset(image_folder, output_folder, train_ratio=0.7, val_ratio=0.15):
+    # Create output directories for train, val, and test sets
+    for split in ['train', 'val', 'test']:
+        split_folder = os.path.join(output_folder, split)
+        os.makedirs(split_folder, exist_ok=True)
+
+    # Loop through each class folder
+    for class_name in os.listdir(image_folder):
+        class_folder = os.path.join(image_folder, class_name)
+        if os.path.isdir(class_folder):
+            images = os.listdir(class_folder)
+            random.shuffle(images)
+
+            # Calculate the number of images for each split
+            train_split = int(len(images) * train_ratio)
+            val_split = int(len(images) * val_ratio)
+
+            train_images = images[:train_split]
+            val_images = images[train_split:train_split + val_split]
+            test_images = images[train_split + val_split:]
+
+            # Copy images to respective folders
+            for split, split_images in zip(['train', 'val', 'test'], [train_images, val_images, test_images]):
+                split_class_folder = os.path.join(output_folder, split, class_name)
+                os.makedirs(split_class_folder, exist_ok=True)
+                for image_name in split_images:
+                    shutil.copy(os.path.join(class_folder, image_name), os.path.join(split_class_folder, image_name))
+    
+    for image_name in split_images:
+        print(f"Copying {image_name} to {split} set")
+        shutil.copy(os.path.join(class_folder, image_name), os.path.join(split_class_folder, image_name))
+
+# Example usage:
+image_folder = "C:\\SignLanguage\\ProcessedDataset"
+output_folder = "C:\\SignLanguage\\FinalDataset"
+split_dataset(image_folder, output_folder)
+
