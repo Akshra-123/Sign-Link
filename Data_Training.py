@@ -158,7 +158,6 @@ def check_labels(image_folder):
 image_folder = "C:\\SignLanguage\\ProcessedDataset"  # Your folder with processed images
 check_labels(image_folder)
 
-# Data Splitting
 import os
 import shutil
 import random
@@ -190,10 +189,6 @@ def split_dataset(image_folder, output_folder, train_ratio=0.7, val_ratio=0.15):
                 os.makedirs(split_class_folder, exist_ok=True)
                 for image_name in split_images:
                     shutil.copy(os.path.join(class_folder, image_name), os.path.join(split_class_folder, image_name))
-    
-    for image_name in split_images:
-        print(f"Copying {image_name} to {split} set")
-        shutil.copy(os.path.join(class_folder, image_name), os.path.join(split_class_folder, image_name))
 
 # Example usage:
 image_folder = "C:\\SignLanguage\\ProcessedDataset"
