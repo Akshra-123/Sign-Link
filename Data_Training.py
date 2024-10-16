@@ -1,3 +1,4 @@
+# Extracting Frames from Dataset
 import cv2
 import os
 import re
@@ -68,6 +69,7 @@ video_folder = "C:\\SignLanguage\\Dataset"
 output_folder = "C:\\SignLanguage\\OutputFolder"
 extract_frames_from_videos(video_folder, output_folder, fps=5)
 
+# Data Preprocessing
 import os
 import cv2
 import numpy as np
@@ -130,3 +132,28 @@ def preprocess_images(image_folder, output_folder, target_size=(224, 224), augme
 image_folder = "C:\\SignLanguage\\OutputFolder"  # Folder with extracted frames
 output_folder = "C:\\SignLanguage\\ProcessedDataset"  # Folder for processed images
 preprocess_images(image_folder, output_folder, target_size=(224, 224), augment=True)
+
+# Checking Data labels
+import os
+from PIL import Image
+
+def check_labels(image_folder):
+    # Loop through each class folder in the image folder
+    for class_name in os.listdir(image_folder):
+        class_folder = os.path.join(image_folder, class_name)
+        if os.path.isdir(class_folder):
+            print(f"Class: {class_name}")
+            # Loop through each image in the class folder
+            for image_name in os.listdir(class_folder):
+                image_path = os.path.join(class_folder, image_name)
+                # Load and display the image
+                try:
+                    img = Image.open(image_path)
+                    img.show()  # This will open the image in the default viewer
+                    print(f"Image: {image_name} - Label: {class_name}")
+                except Exception as e:
+                    print(f"Could not open image {image_name}: {e}")
+
+# Example usage
+image_folder = "C:\\SignLanguage\\ProcessedDataset"  # Your folder with processed images
+check_labels(image_folder)
