@@ -27,7 +27,7 @@ def extract_frames_from_videos(video_folder, output_folder, fps=5):
     for video_file in video_files:
         video_path = video_file
         
-        # Create a subfolder for each video to store its frames
+        # Creating a subfolder for each video to store its frames
         video_name = sanitize_folder_name(os.path.splitext(os.path.basename(video_file))[0])
         video_output_folder = os.path.join(output_folder, video_name)
 
